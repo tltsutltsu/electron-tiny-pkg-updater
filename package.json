@@ -1,0 +1,30 @@
+{
+  "name": "electron-tiny-updater",
+  "version": "1.0.0",
+  "description": "tiny electron updater",
+  "main": "index.js",
+  "keywords": [
+    "electron",
+    "electron app",
+    "electron application",
+    "application",
+    "electron update",
+    "update",
+    "windows",
+    "mac"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vzhufeng/electron-tiny-updater.git"
+  },
+  "dependencies": {
+    "js-yaml": "^3.14.0",
+    "semver": "^7.3.2"
+  },
+  "author": "vzhufeng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vzhufeng/electron-tiny-updater/issues"
+  },
+  "homepage": "https://github.com/vzhufeng/electron-tiny-updater#readme"
+}
