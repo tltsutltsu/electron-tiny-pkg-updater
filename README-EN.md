@@ -34,6 +34,7 @@ emitter.on('error', (e)=>{
 ```
 
 parameter `ymlFilename` can be omitted, in win the default value is `latest.yml`, in mac it's `latest-mac.yml`.
+
 parameter `pkgFilename` can be omitted, in win the default value is the first `url` value in yml file which ends with `.exe`, in mac it's the first `url` value in yml file which ends with `.dmg`, if the value can't be found above, it will be the `path` value in yml file.
 
 ## detail

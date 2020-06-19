@@ -34,6 +34,7 @@ emitter.on('error', (e)=>{
 ```
 
 ymlFilename可以省略，在win下默认值是latest.yml，mac下是latest-mac.yml
+
 pkgFilename可以省略，在win下默认值是yml中files项里第一个以.exe结尾的url值，mac下是yml中files项里第一个以.dmg结尾的url值，如果还找不到，会取path值
 
 ## 说明
