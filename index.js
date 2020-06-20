@@ -9,9 +9,9 @@ const exec = require("child_process").exec;
 
 function tinyUpdater({
   currentVersion,
-  ymlUrl,
-  ymlFilename,
-  pkgUrl,
+  configType = "json",
+  configUrl,
+  configFilename,
   pkgFilename,
   filePath,
 }) {
@@ -21,28 +21,33 @@ function tinyUpdater({
 
   async function doUpdate() {
     const isMac = process.platform === "darwin";
-    ymlFilename = ymlFilename || (isMac ? "latest-mac.yml" : "latest.yml");
-    // 下载yml文件
+    configFilename = configFilename || "config.json";
+    // 下载配置文件
     await download({
-      url: ymlUrl,
-      filename: ymlFilename,
+      url: configUrl,
+      filename: configFilename,
       filePath,
       withProgress: false,
     });
 
     try {
-      const fileInfo = yaml.safeLoad(fs.readFileSync(path.join(filePath, ymlFilename), "utf8"));
+      let fileInfo;
+      const isYml = configType === "yml";
+      if (isYml) {
+        fileInfo = yaml.safeLoad(
+          fs.readFileSync(path.join(filePath, configFilename), "utf8")
+        );
+      } else {
+        fileInfo = JSON.parse(
+          fs.readFileSync(path.join(filePath, configFilename), "utf8")
+        );
+      }
+
       if (semver.gt(fileInfo.version, currentVersion)) {
-        let pkgName = "";
-        if (fileInfo.files.length > 1) {
-          const suffix = isMac ? ".dmg" : ".exe";
-          pkgName = (fileInfo.files.find((v) => v.url.endsWith(suffix)) || {})
-            .url;
-        }
-        pkgFilename = pkgFilename || pkgName || fileInfo.path;
+        pkgFilename = pkgFilename || "installation";
         // 下载安装包
         await download({
-          url: pkgUrl,
+          url: isYml ? fileInfo.files[0].url : fileInfo.url,
           filename: pkgFilename,
           filePath,
         });
