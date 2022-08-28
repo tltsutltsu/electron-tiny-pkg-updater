@@ -1,5 +1,3 @@
-[中文](https://github.com/vzhufeng/electron-tiny-updater/blob/master/README.md)
-
 a tiny updater for your electron app, depend on the result produced by electron-builder, support mac and windows.
 
 no complex verify process like electron-updater, only download and execute opration. if you use NSIS deal with your exe, you may have trouble with sha512 verify of electron-updater, unless you generate a sha512 by yourself and paste it into latest.yml.
