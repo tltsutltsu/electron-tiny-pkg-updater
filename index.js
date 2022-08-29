@@ -7,71 +7,90 @@ const semver = require("semver");
 const EventEmitter = require("events");
 const exec = require("child_process").exec;
 
-function tinyUpdater({
-  currentVersion,
-  configType = "json",
-  configUrl,
-  configFilename,
-  pkgFilename,
-  filePath,
-}) {
-  const emitter = new EventEmitter();
-  doUpdate();
-  return emitter;
 
-  async function doUpdate() {
-    const isMac = process.platform === "darwin";
-    configFilename = configFilename || "config.json";
-    // 下载配置文件
-    await download({
-      url: configUrl,
-      filename: configFilename,
-      filePath,
-      withProgress: false,
-    });
+class TinyUpdater {
+  constructor({
+    currentVersion,
+    configUrl,
+    configFilename,
+    localFolder
+  }) {
+    this.currentVersion = currentVersion
+    this.configUrl = configUrl
+    this.configFilename = configFilename
+    this.localFolder = localFolder
 
-    try {
-      let fileInfo;
-      const isYml = configType === "yml";
-      if (isYml) {
-        fileInfo = yaml.safeLoad(
-          fs.readFileSync(path.join(filePath, configFilename), "utf8")
-        );
+    this.emitter = new EventEmitter();
+
+    this.checkForUpdates()
+  }
+
+  async checkForUpdates() {
+    this.config = await this._getConfig()
+
+    if (semver.gt(this.config.version, this.currentVersion)) {
+      this.emitter.emit('updates-available')
+
+      if (this.checkIfDownloaded(this.currentVersion)) {
+        this.emitter.emit('updates-downloaded')
+
+        this.emitter.emit('installing')
+
+        await this.install()
       } else {
-        fileInfo = JSON.parse(
-          fs.readFileSync(path.join(filePath, configFilename), "utf8")
-        );
+        await this.download()
       }
-
-      if (semver.gt(fileInfo.version, currentVersion)) {
-        pkgFilename = pkgFilename || "installation";
-        // 下载安装包
-        await download({
-          url: isYml ? fileInfo.files[0].url : fileInfo.url,
-          filename: pkgFilename,
-          filePath,
-        });
-
-        if (isMac) {
-          exec(`open ${path.join(filePath, pkgFilename)}`);
-        } else {
-          exec(path.join(filePath, pkgFilename));
-        }
-      } else {
-        emitter.emit(
-          "error",
-          new Error("latest version is not newer than current version")
-        );
-      }
-    } catch (e) {
-      emitter.emit("error", e);
+    } else {
+      this.emitter.emit('actual-version')
     }
   }
 
-  function download({ url, filename, filePath, withProgress = true }) {
+  async download() {
+    this.emitter.emit('downloading-updates')
+
+    const downloadLink = this._detectProperDownloadLink()
+
+    await this._downloadFile({
+      url: downloadLink,
+      filenameToSave: 'installer.' + this._getSystemInstallerExtension(),
+      directoryToSave: path.join(this.directoryToSave, this.currentVersion),
+      withProgress: true
+    })
+
+    this.emitter.emit('updates-downloaded')
+  }
+
+  checkIfDownloaded() {
+    return fs.existsSync(
+      path.join(
+        this.directoryToSave,
+        this.currentVersion,
+        `installer.${this._getSystemInstallerExtension()}`
+      )
+    )
+  }
+
+  install() {
+    const isMac = process.platform === "darwin";
+    const isWin = process.platform === 'win32'
+
+    if (isMac) {
+      exec(`installer -pkg ${path.join(filePath, pkgFilename)} -target /`);
+    } else if (isWin) {
+      exec(path.join(filePath, pkgFilename));
+    } else {
+      this.emitter.emit('unsupported-platform')
+      return
+    }
+
+    const { app } = require('electron')
+    app.quit()
+  }
+
+  _downloadFile({ url, filenameToSave, directoryToSave, withProgress = true }) {
     return new Promise((resolve, reject) => {
       const agent = url.startsWith("https") ? https : http;
-      const file = path.join(filePath, filename);
+      const file = path.join(directoryToSave, filenameToSave);
       const fileStream = fs.createWriteStream(file);
       const req = agent.request(url, (res) => {
         let downLength = 0;
@@ -108,8 +127,52 @@ function tinyUpdater({
       req.end();
     });
   }
+
+  _detectProperDownloadLink(config) {
+    const neededFormat = this._getSystemInstallerExtension()
+
+    for (const file of config.files) {
+      if (file.url.endsWith(neededFormat)) {
+        return file.url
+      }
+    }
+  }
+
+  async _getConfig({ configFilename = 'latest.yml', configUrl, directoryToSave }) {
+    const urlOnDisk = path.join(directoryToSave, configFilename)
+
+    await this._downloadFile({
+      url: configUrl,
+      filename: configFilename,
+      directoryToSave: urlOnDisk,
+      withProgress: false,
+    });
+
+    try {
+      const config = yaml.safeLoad(
+        fs.readFileSync(urlOnDisk, "utf8")
+      );
+
+      return config
+    } catch (_) { /** */ }
+  }
+
+  _getSystemInstallerExtension() {
+    let neededFormat = 'deb'
+
+    switch (process.platform) {
+      case 'win32':
+        neededFormat = 'exe'
+        break;
+      case 'darwin':
+        neededFormat = 'pkg'
+        break;
+    }
+
+    return neededFormat
+  }
 }
 
 module.exports = {
-  tinyUpdater,
+  TinyUpdater,
 };

@@ -1,7 +1,7 @@
 {
-  "name": "electron-tiny-updater",
-  "version": "1.0.1",
-  "description": "tiny electron updater",
+  "name": "electron-tiny-pkg-updater",
+  "version": "1.0.0",
+  "description": "tiny electron updater that supports pkg installers",
   "main": "index.js",
   "keywords": [
     "electron",
@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vzhufeng/electron-tiny-updater.git"
+    "url": "git+https://github.com/tltsutltsu/electron-tiny-pkg-updater.git"
   },
   "dependencies": {
     "js-yaml": "^3.14.0",
@@ -24,7 +24,7 @@
   "author": "vzhufeng",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vzhufeng/electron-tiny-updater/issues"
+    "url": "https://github.com/tltsutltsu/electron-tiny-pkg-updater/issues"
   },
-  "homepage": "https://github.com/vzhufeng/electron-tiny-updater#readme"
+  "homepage": "https://github.com/tltsutltsu/electron-tiny-pkg-updater#readme"
 }
