@@ -7,7 +7,6 @@ const semver = require("semver");
 const EventEmitter = require("events");
 const exec = require("child_process").exec;
 
-
 class TinyUpdater {
   constructor({
     currentVersion,
