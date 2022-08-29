@@ -16,6 +16,7 @@ class TinyUpdater {
   }) {
     this.currentVersion = currentVersion
     this.configUrl = configUrl
+    this.remoteUrl = path.basename(configUrl)
     this.configFilename = configFilename
     this.localFolder = localFolder
 
@@ -132,7 +133,7 @@ class TinyUpdater {
 
     for (const file of config.files) {
       if (file.url.endsWith(neededFormat)) {
-        return file.url
+        return path.join(this.remoteUrl, file.url)
       }
     }
   }
