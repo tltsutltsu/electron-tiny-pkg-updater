@@ -159,7 +159,7 @@ class TinyUpdater {
 
     await this._downloadFile({
       url: this.configUrl,
-      filename: 'latest.yml',
+      filenameToSave: 'latest.yml',
       directoryToSave: urlOnDisk,
       withProgress: false,
     });
