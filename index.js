@@ -101,7 +101,7 @@ class TinyUpdater {
 
     if (isMac) {
       // exec(`installer -pkg ${installerPath} -target /`);
-      exec(`open ${installerPath}`);
+      exec(`open "${installerPath}"`);
     } else if (isWin) {
       exec(installerPath);
     } else {
