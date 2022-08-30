@@ -45,7 +45,7 @@ class TinyUpdater {
           > 30
         )
       ) {
-        this.emitter.emit('updater', 'updates-downloaded')
+        this.emitter.emit('updater', 'updates-downloaded', this.config.version)
 
         this.emitter.emit('updater', 'installing')
 
@@ -76,7 +76,7 @@ class TinyUpdater {
       withProgress: true
     })
 
-    this.emitter.emit('updater', 'updates-downloaded')
+    this.emitter.emit('updater', 'updates-downloaded', this.config.version)
   }
 
   getVersionInstallerPath(version) {
