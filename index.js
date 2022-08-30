@@ -130,7 +130,7 @@ class TinyUpdater {
   _detectProperDownloadLink(config) {
     let neededFormat = this._getSystemInstallerExtension()
 
-    for (const file of config.files) {
+    for (const file of this.config.files) {
       if (neededFormat === 'pkg') {
         neededFormat = 'dmg'
       }
