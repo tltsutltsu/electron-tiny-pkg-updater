@@ -32,7 +32,6 @@ class TinyUpdater {
 
   async checkForUpdates() {
     this.config = await this._getConfig()
-    console.log(this.config, this.currentVersion)
 
     if (semver.gt(this.config.version, this.currentVersion)) {
       this.emitter.emit('updater', 'updates-available')
@@ -79,13 +78,11 @@ class TinyUpdater {
   checkIfDownloaded(version) {
     const installerPath = this.getVersionInstallerPath(version)
     const exists = fs.existsSync(installerPath)
-    console.log('exists', exists, installerPath)
+
     if (!exists) return false
 
     const sizeInMb = fs.statSync(installerPath)
       .size / (1024 * 1024)
-
-    console.log(installerPath, sizeInMb)
 
     return sizeInMb > 30
   }
@@ -153,7 +150,6 @@ class TinyUpdater {
 
   _detectProperDownloadLink() {
     let neededFormat = this._getSystemInstallerExtension()
-    console.log('remoteUrl', this.remoteUrl)
 
     for (const file of this.config.files) {
       if (neededFormat === 'pkg') {
