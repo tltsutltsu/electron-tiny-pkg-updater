@@ -41,10 +41,6 @@ class TinyUpdater {
         this.checkIfDownloaded(this.config.version)
       ) {
         this.emitter.emit('updater', 'updates-downloaded', this.config.version)
-
-        this.emitter.emit('updater', 'installing')
-
-        await this.install()
       } else {
         await this.download()
       }
