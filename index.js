@@ -108,8 +108,8 @@ class TinyUpdater {
       return
     }
 
-    const { app } = require('electron')
-    app.quit()
+    // const { app } = require('electron')
+    // app.quit()
   }
 
   _downloadFile({ url, filenameToSave, directoryToSave, withProgress = true }) {
