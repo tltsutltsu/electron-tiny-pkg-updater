@@ -37,9 +37,7 @@ class TinyUpdater {
     if (semver.gt(this.config.version, this.currentVersion)) {
       this.emitter.emit('updater', 'updates-available')
 
-      if (
-        this.checkIfDownloaded(this.config.version)
-      ) {
+      if (this.checkIfDownloaded(this.config.version)) {
         this.emitter.emit('updater', 'updates-downloaded', this.config.version)
       } else {
         await this.download()
