@@ -129,10 +129,26 @@ class TinyUpdater {
   }
 
   _detectProperDownloadLink(config) {
-    const neededFormat = this._getSystemInstallerExtension()
+    let neededFormat = this._getSystemInstallerExtension()
 
     for (const file of config.files) {
+      if (neededFormat === 'pkg') {
+        neededFormat = 'dmg'
+      }
+
       if (file.url.endsWith(neededFormat)) {
+        if (neededFormat === 'dmg') {
+          const properArch = process.arch === 'arm64' ? 'arm64' : 'x64'
+
+          return path.join(
+            this.remoteUrl,
+            file.url
+              .replace('dmg', 'pkg')
+              .replace('x64', properArch)
+              .replace('arm64', properArch)
+          )
+        }
+
         return path.join(this.remoteUrl, file.url)
       }
     }
