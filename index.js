@@ -52,7 +52,7 @@ class TinyUpdater {
     await this._downloadFile({
       url: downloadLink,
       filenameToSave: 'installer.' + this._getSystemInstallerExtension(),
-      directoryToSave: path.join(this.directoryToSave, this.currentVersion),
+      directoryToSave: path.join(this.localFolder, this.currentVersion),
       withProgress: true
     })
 
@@ -127,7 +127,7 @@ class TinyUpdater {
     });
   }
 
-  _detectProperDownloadLink(config) {
+  _detectProperDownloadLink() {
     let neededFormat = this._getSystemInstallerExtension()
 
     for (const file of this.config.files) {
