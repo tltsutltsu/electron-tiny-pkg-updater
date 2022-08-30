@@ -36,14 +36,6 @@ class TinyUpdater {
 
       if (
         this.checkIfDownloaded(this.config.version)
-        && (
-          (
-            fs.statSync(
-              this.getVersionInstallerPath(this.config.version)
-            ).size / (1024 * 1024)
-          )
-          > 30
-        )
       ) {
         this.emitter.emit('updater', 'updates-downloaded', this.config.version)
 
@@ -88,19 +80,28 @@ class TinyUpdater {
   }
 
   checkIfDownloaded(version) {
-    return fs.existsSync(
-      this.getVersionInstallerPath(version)
-    )
+    const installerPath = this.getVersionInstallerPath(version)
+    const exists = fs.existsSync(installerPath)
+    if (!exists) return false
+
+    const sizeInMb = fs.statSync(installerPath)
+      .size / (1024 * 1024)
+
+    console.log(installerPath, sizeInMb)
+
+    return sizeInMb > 30
   }
 
   install() {
     const isMac = process.platform === "darwin";
     const isWin = process.platform === 'win32'
 
+    const installerPath = getVersionInstallerPath(this.config.version)
+
     if (isMac) {
-      exec(`installer -pkg ${path.join(filePath, pkgFilename)} -target /`);
+      exec(`installer -pkg ${installerPath} -target /`);
     } else if (isWin) {
-      exec(path.join(filePath, pkgFilename));
+      exec(installerPath);
     } else {
       this.emitter.emit('updater', 'unsupported-platform')
       return
