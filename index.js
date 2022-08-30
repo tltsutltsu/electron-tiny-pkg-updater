@@ -62,7 +62,7 @@ class TinyUpdater {
   checkIfDownloaded() {
     return fs.existsSync(
       path.join(
-        this.directoryToSave,
+        this.localFolder,
         this.currentVersion,
         `installer.${this._getSystemInstallerExtension()}`
       )
