@@ -34,7 +34,17 @@ class TinyUpdater {
     if (semver.gt(this.config.version, this.currentVersion)) {
       this.emitter.emit('updater', 'updates-available')
 
-      if (this.checkIfDownloaded(this.currentVersion)) {
+      if (
+        this.checkIfDownloaded(this.config.version)
+        && (
+          (
+            fs.statSync(
+              this.getVersionInstallerPath(this.config.version)
+            ).size / (1024 * 1024)
+          )
+          > 30
+        )
+      ) {
         this.emitter.emit('updater', 'updates-downloaded')
 
         this.emitter.emit('updater', 'installing')
@@ -69,13 +79,17 @@ class TinyUpdater {
     this.emitter.emit('updater', 'updates-downloaded')
   }
 
-  checkIfDownloaded() {
+  getVersionInstallerPath(version) {
+    return path.join(
+      this.localFolder,
+      version,
+      `installer.${this._getSystemInstallerExtension()}`
+    )
+  }
+
+  checkIfDownloaded(version) {
     return fs.existsSync(
-      path.join(
-        this.localFolder,
-        this.currentVersion,
-        `installer.${this._getSystemInstallerExtension()}`
-      )
+      this.getVersionInstallerPath(version)
     )
   }
 
@@ -109,7 +123,7 @@ class TinyUpdater {
             downLength += data.length;
             fileStream.write(data);
             if (withProgress) {
-              emitter.emit('updater', "download-progress", totalLen, downLength);
+              this.emitter.emit('updater', "download-progress", totalLen, downLength);
             }
           })
           .on("end", () => {
@@ -121,14 +135,14 @@ class TinyUpdater {
         });
 
         fileStream.on("error", (e) => {
-          emitter.emit("error", e);
+          this.emitter.emit("error", e);
           fileStream.destroy();
           fs.remove(file);
           reject();
         });
       });
       req.on("error", () => {
-        emitter.emit("error", e);
+        this.emitter.emit("error", e);
         fileStream.destroy();
         fs.remove(file);
         reject();
