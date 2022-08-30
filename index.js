@@ -11,13 +11,11 @@ class TinyUpdater {
   constructor({
     currentVersion,
     configUrl,
-    configFilename,
     localFolder
   }) {
     this.currentVersion = currentVersion
     this.configUrl = configUrl
     this.remoteUrl = path.basename(configUrl)
-    this.configFilename = configFilename
     this.localFolder = localFolder
 
     this.emitter = new EventEmitter();
@@ -29,24 +27,24 @@ class TinyUpdater {
     this.config = await this._getConfig()
 
     if (semver.gt(this.config.version, this.currentVersion)) {
-      this.emitter.emit('updates-available')
+      this.emitter.emit('updater', 'updates-available')
 
       if (this.checkIfDownloaded(this.currentVersion)) {
-        this.emitter.emit('updates-downloaded')
+        this.emitter.emit('updater', 'updates-downloaded')
 
-        this.emitter.emit('installing')
+        this.emitter.emit('updater', 'installing')
 
         await this.install()
       } else {
         await this.download()
       }
     } else {
-      this.emitter.emit('actual-version')
+      this.emitter.emit('updater', 'actual-version')
     }
   }
 
   async download() {
-    this.emitter.emit('downloading-updates')
+    this.emitter.emit('updater', 'downloading-updates')
 
     const downloadLink = this._detectProperDownloadLink()
 
@@ -57,7 +55,7 @@ class TinyUpdater {
       withProgress: true
     })
 
-    this.emitter.emit('updates-downloaded')
+    this.emitter.emit('updater', 'updates-downloaded')
   }
 
   checkIfDownloaded() {
@@ -79,7 +77,7 @@ class TinyUpdater {
     } else if (isWin) {
       exec(path.join(filePath, pkgFilename));
     } else {
-      this.emitter.emit('unsupported-platform')
+      this.emitter.emit('updater', 'unsupported-platform')
       return
     }
 
@@ -100,7 +98,7 @@ class TinyUpdater {
             downLength += data.length;
             fileStream.write(data);
             if (withProgress) {
-              emitter.emit("download-progress", totalLen, downLength);
+              emitter.emit('updater', "download-progress", totalLen, downLength);
             }
           })
           .on("end", () => {
@@ -155,11 +153,11 @@ class TinyUpdater {
   }
 
   async _getConfig() {
-    const urlOnDisk = path.join(this.localFolder, this.configFilename)
+    const urlOnDisk = path.join(this.localFolder, 'latest.yml')
 
     await this._downloadFile({
       url: this.configUrl,
-      filename: this.configFilename,
+      filename: 'latest.yml',
       directoryToSave: urlOnDisk,
       withProgress: false,
     });
