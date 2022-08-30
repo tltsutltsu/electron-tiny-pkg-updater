@@ -49,6 +49,13 @@ class TinyUpdater {
 
     const downloadLink = this._detectProperDownloadLink()
 
+    console.log({
+      url: downloadLink,
+      filenameToSave: 'installer.' + this._getSystemInstallerExtension(),
+      directoryToSave: path.join(this.localFolder, this.currentVersion),
+      withProgress: true
+    })
+
     await this._downloadFile({
       url: downloadLink,
       filenameToSave: 'installer.' + this._getSystemInstallerExtension(),
