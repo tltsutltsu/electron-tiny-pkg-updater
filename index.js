@@ -15,7 +15,7 @@ class TinyUpdater {
   }) {
     this.currentVersion = currentVersion
     this.configUrl = configUrl
-    this.remoteUrl = path.basename(configUrl)
+    this.remoteUrl = path.dirname(configUrl)
     this.localFolder = localFolder
 
     this.emitter = new EventEmitter();
