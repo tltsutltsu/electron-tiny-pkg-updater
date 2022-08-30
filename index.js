@@ -100,7 +100,8 @@ class TinyUpdater {
     const installerPath = this.getVersionInstallerPath(this.config.version)
 
     if (isMac) {
-      exec(`installer -pkg ${installerPath} -target /`);
+      // exec(`installer -pkg ${installerPath} -target /`);
+      exec(`open ${installerPath}`);
     } else if (isWin) {
       exec(installerPath);
     } else {
