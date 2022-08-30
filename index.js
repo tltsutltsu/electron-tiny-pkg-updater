@@ -136,6 +136,7 @@ class TinyUpdater {
 
   _detectProperDownloadLink() {
     let neededFormat = this._getSystemInstallerExtension()
+    console.log('remoteUrl', this.remoteUrl)
 
     for (const file of this.config.files) {
       if (neededFormat === 'pkg') {
