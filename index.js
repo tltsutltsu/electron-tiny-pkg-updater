@@ -11,7 +11,8 @@ class TinyUpdater {
   constructor({
     currentVersion,
     configUrl,
-    localFolder
+    localFolder,
+    checkInterval = 1000 * 60 * 30
   }) {
     this.currentVersion = currentVersion
     this.configUrl = configUrl
@@ -25,6 +26,8 @@ class TinyUpdater {
     this.emitter = new EventEmitter();
 
     this.checkForUpdates()
+
+    setInterval(this.checkForUpdates, checkInterval)
   }
 
   async checkForUpdates() {
