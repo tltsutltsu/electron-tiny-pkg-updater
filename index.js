@@ -82,6 +82,7 @@ class TinyUpdater {
   checkIfDownloaded(version) {
     const installerPath = this.getVersionInstallerPath(version)
     const exists = fs.existsSync(installerPath)
+    console.log('exists', exists, installerPath)
     if (!exists) return false
 
     const sizeInMb = fs.statSync(installerPath)
