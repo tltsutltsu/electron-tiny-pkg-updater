@@ -155,7 +155,7 @@ class TinyUpdater {
   async _getConfig() {
     const urlOnDisk = path.join(this.localFolder, 'latest.yml')
 
-    console.log(this.configUrl, filename, urlOnDisk)
+    console.log(this.configUrl, urlOnDisk)
 
     await this._downloadFile({
       url: this.configUrl,
