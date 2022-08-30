@@ -154,12 +154,12 @@ class TinyUpdater {
     }
   }
 
-  async _getConfig({ configFilename = 'latest.yml', configUrl, directoryToSave }) {
-    const urlOnDisk = path.join(directoryToSave, configFilename)
+  async _getConfig() {
+    const urlOnDisk = path.join(this.localFolder, this.configFilename)
 
     await this._downloadFile({
-      url: configUrl,
-      filename: configFilename,
+      url: this.configUrl,
+      filename: this.configFilename,
       directoryToSave: urlOnDisk,
       withProgress: false,
     });
