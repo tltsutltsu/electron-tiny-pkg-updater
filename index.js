@@ -18,6 +18,10 @@ class TinyUpdater {
     this.remoteUrl = path.dirname(configUrl)
     this.localFolder = localFolder
 
+    try {
+      fs.mkdirSync(localFolder)
+    } catch (_) { /** */ }
+
     this.emitter = new EventEmitter();
 
     this.checkForUpdates()
@@ -49,17 +53,16 @@ class TinyUpdater {
 
     const downloadLink = this._detectProperDownloadLink()
 
-    console.log({
-      url: downloadLink,
-      filenameToSave: 'installer.' + this._getSystemInstallerExtension(),
-      directoryToSave: path.join(this.localFolder, this.currentVersion),
-      withProgress: true
-    })
+    const directoryToSave = path.join(this.localFolder, this.currentVersion)
+
+    try {
+      fs.mkdirSync(directoryToSave)
+    } catch (_) { /** */ }
 
     await this._downloadFile({
       url: downloadLink,
       filenameToSave: 'installer.' + this._getSystemInstallerExtension(),
-      directoryToSave: path.join(this.localFolder, this.currentVersion),
+      directoryToSave,
       withProgress: true
     })
 
