@@ -55,7 +55,7 @@ class TinyUpdater {
 
     const downloadLink = this._detectProperDownloadLink()
 
-    const directoryToSave = path.join(this.localFolder, this.currentVersion)
+    const directoryToSave = path.dirname(this.getVersionInstallerPath(this.config.version))
 
     try {
       fs.mkdirSync(directoryToSave)
@@ -97,7 +97,7 @@ class TinyUpdater {
     const isMac = process.platform === "darwin";
     const isWin = process.platform === 'win32'
 
-    const installerPath = getVersionInstallerPath(this.config.version)
+    const installerPath = this.getVersionInstallerPath(this.config.version)
 
     if (isMac) {
       exec(`installer -pkg ${installerPath} -target /`);
