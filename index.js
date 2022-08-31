@@ -27,7 +27,8 @@ class TinyUpdater {
 
     this.checkForUpdates()
 
-    setInterval(this.checkForUpdates, checkInterval)
+    // using arrow function to pass `this` context
+    setInterval(() => { this.checkForUpdates() }, checkInterval)
   }
 
   async checkForUpdates() {
