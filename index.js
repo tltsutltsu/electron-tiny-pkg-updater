@@ -85,7 +85,10 @@ class TinyUpdater {
     const sizeInMb = fs.statSync(installerPath)
       .size / (1024 * 1024)
 
-    return sizeInMb > 30
+    const installerMd5 = require('md5-file').sync(installerPath)
+    const md5IsCorrect = this.config.md5 == installerMd5
+
+    return sizeInMb > 40 && md5IsCorrect
   }
 
   install() {
