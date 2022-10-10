@@ -142,7 +142,7 @@ class TinyUpdater {
           reject();
         });
       });
-      req.on("error", () => {
+      req.on("error", (e) => {
         this.emitter.emit("error", e);
         fileStream.destroy();
         fs.remove(file);
