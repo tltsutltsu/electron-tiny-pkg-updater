@@ -5,6 +5,7 @@ const path = require("path");
 const yaml = require("js-yaml");
 const semver = require("semver");
 const EventEmitter = require("events");
+const { spawn } = require("child_process");
 const exec = require("child_process").exec;
 
 class TinyUpdater {
@@ -101,7 +102,12 @@ class TinyUpdater {
       // exec(`installer -pkg ${installerPath} -target /`);
       exec(`open "${installerPath}"`);
     } else if (isWin) {
-      exec(installerPath);
+      const subprocess = spawn(installerPath, {
+        detached: true,
+        stdio: 'ignore'
+      })
+
+      subprocess.unref()
     } else {
       this.emitter.emit('updater', 'unsupported-platform')
       return
