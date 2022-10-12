@@ -112,9 +112,6 @@ class TinyUpdater {
       this.emitter.emit('updater', 'unsupported-platform')
       return
     }
-
-    // const { app } = require('electron')
-    // app.quit()
   }
 
   _downloadFile({ url, filenameToSave, directoryToSave, withProgress = true }) {
