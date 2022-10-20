@@ -141,14 +141,14 @@ class TinyUpdater {
         fileStream.on("error", (e) => {
           this.emitter.emit("error", e);
           fileStream.destroy();
-          fs.unlinkSync(file);
+          fs.unlinkSync(file);//FIXME: may cause bugs
           reject();
         });
       });
       req.on("error", (e) => {
         this.emitter.emit("error", e);
         fileStream.destroy();
-        fs.unlinkSync(file);
+        fs.unlinkSync(file);//FIXME: may cause bugs
         reject();
       });
       req.end();
