@@ -86,20 +86,22 @@ class TinyUpdater {
     const sizeInMb = fs.statSync(installerPath)
       .size / (1024 * 1024)
 
+    const configMd5 = process.arch === 'arm64'
+      ? this.config['md5-arm64']
+      : this.config.md5
     const installerMd5 = require('md5-file').sync(installerPath)
-    const md5IsCorrect = this.config.md5 == installerMd5
+    const md5IsCorrect = configMd5 === installerMd5
 
     return sizeInMb > 40 && md5IsCorrect
   }
 
   install() {
-    const isMac = process.platform === "darwin";
+    const isMac = process.platform === 'darwin';
     const isWin = process.platform === 'win32'
 
     const installerPath = this.getVersionInstallerPath(this.config.version)
 
     if (isMac) {
-      // exec(`installer -pkg ${installerPath} -target /`);
       exec(`open "${installerPath}"`);
     } else if (isWin) {
       const subprocess = spawn(installerPath, {
@@ -167,13 +169,18 @@ class TinyUpdater {
         if (neededFormat === 'dmg') {
           const properArch = process.arch === 'arm64' ? 'arm64' : 'x64'
 
-          return path.join(
+
+          const link = path.join(
             this.remoteUrl,
             file.url
               .replace('dmg', 'pkg')
               .replace('x64', properArch)
               .replace('arm64', properArch)
           )
+
+          this.emitter.emit('downloadLink is ' + link)
+
+          return link
         }
 
         return path.join(this.remoteUrl, file.url)
