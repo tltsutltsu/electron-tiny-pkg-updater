@@ -128,7 +128,7 @@ class TinyUpdater {
           .on("data", (data) => {
             downLength += data.length;
             fileStream.write(data);
-            if (withProgress) {
+            if (withProgress && downLength % 1000 === 0) {
               this.emitter.emit('updater', "download-progress", totalLen, downLength);
             }
           })
