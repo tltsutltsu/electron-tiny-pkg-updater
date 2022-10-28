@@ -66,6 +66,13 @@ class TinyUpdater {
       withProgress: true
     })
 
+    // if we got some error while downloading
+    // then wait till another start
+    if (!this.checkIfDownloaded(this.config.version)) {
+      this.emitter.emit('error', 'checksums wrong or filesize is low')
+      return
+    }
+
     this.emitter.emit('updater', 'updates-downloaded', this.config.version)
   }
 
@@ -92,6 +99,15 @@ class TinyUpdater {
     const installerMd5 = require('md5-file').sync(installerPath)
     const md5IsCorrect = configMd5 === installerMd5
 
+    this.emitter.emit('md5', {
+      configMd5,
+      'arch': process.arch,
+      'this.config.md5': this.config.md5,
+      'this.config-md5-arm64': this.config['md5-arm64'],
+      installerMd5,
+      md5IsCorrect
+    })
+
     return sizeInMb > 40 && md5IsCorrect
   }
 
@@ -111,7 +127,7 @@ class TinyUpdater {
 
       subprocess.unref()
     } else {
-      this.emitter.emit('updater', 'unsupported-platform')
+      this.emitter.emit('updater', 'error', 'unsupported-platform')
       return
     }
   }
