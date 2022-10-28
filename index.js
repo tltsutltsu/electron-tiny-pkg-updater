@@ -178,7 +178,7 @@ class TinyUpdater {
               .replace('arm64', properArch)
           )
 
-          this.emitter.emit('downloadLink is ' + link)
+          this.emitter.emit('download-link', link)
 
           return link
         }
