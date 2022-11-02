@@ -87,7 +87,7 @@ class TinyUpdater {
   }
 
   getProcessArch() {
-    if (translated) return 'arm64'
+    if (this.translated) return 'arm64'
 
     return process.arch
   }
