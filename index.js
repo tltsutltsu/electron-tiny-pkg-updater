@@ -13,12 +13,14 @@ class TinyUpdater {
     currentVersion,
     configUrl,
     localFolder,
-    checkInterval = 1000 * 60 * 30
+    checkInterval = 1000 * 60 * 30,
+    translated = false
   }) {
     this.currentVersion = currentVersion
     this.configUrl = configUrl
     this.remoteUrl = path.dirname(configUrl)
     this.localFolder = localFolder
+    this.translated = translated
 
     try {
       fs.mkdirSync(localFolder)
@@ -84,6 +86,12 @@ class TinyUpdater {
     )
   }
 
+  getProcessArch() {
+    if (translated) return 'arm64'
+
+    return process.arch
+  }
+
   checkIfDownloaded(version) {
     const installerPath = this.getVersionInstallerPath(version)
     const exists = fs.existsSync(installerPath)
@@ -93,7 +101,7 @@ class TinyUpdater {
     const sizeInMb = fs.statSync(installerPath)
       .size / (1024 * 1024)
 
-    const configMd5 = process.arch === 'arm64'
+    const configMd5 = this.getProcessArch() === 'arm64'
       ? this.config['md5-arm64']
       : this.config.md5
     const installerMd5 = require('md5-file').sync(installerPath)
@@ -101,7 +109,7 @@ class TinyUpdater {
 
     this.emitter.emit('md5', {
       configMd5,
-      'arch': process.arch,
+      'arch': this.getProcessArch(),
       'this.config.md5': this.config.md5,
       'this.config-md5-arm64': this.config['md5-arm64'],
       installerMd5,
@@ -183,8 +191,7 @@ class TinyUpdater {
 
       if (file.url.endsWith(neededFormat)) {
         if (neededFormat === 'dmg') {
-          const properArch = process.arch === 'arm64' ? 'arm64' : 'x64'
-
+          const properArch = this.getProcessArch() === 'arm64' ? 'arm64' : 'x64'
 
           const link = path.join(
             this.remoteUrl,
