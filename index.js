@@ -101,7 +101,6 @@ class TinyUpdater {
 
     this.emitter.emit('md5', {
       configMd5,
-      'arch': this.getProcessArch(),
       'this.config.application_hash': this.config.application_hash,
       installerMd5,
       md5IsCorrect
