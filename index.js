@@ -6,7 +6,8 @@ const semver = require("semver");
 const EventEmitter = require("events");
 const { spawn } = require("child_process");
 const exec = require("child_process").exec;
-const fetch = require("node-fetch")
+const fetch = require("node-fetch");
+const sleep = require('sleep-promise');
 
 class TinyUpdater {
   constructor({
@@ -40,6 +41,8 @@ class TinyUpdater {
   async checkForUpdates() {
     this.config = await this._getConfig()
     this.emitter.emit('config-info', this.config, this.config.version)
+
+    await sleep(4000)
 
     if (semver.gt(this.config.version, this.currentVersion)) {
       this.emitter.emit('updater', 'updates-available')
