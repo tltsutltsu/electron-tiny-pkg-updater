@@ -24,14 +24,14 @@ class TinyUpdater {
 
     try {
       fs.mkdirSync(localFolder)
+
+      this.emitter = new EventEmitter();
+
+      this.checkForUpdates()
+
+      // using arrow function to pass `this` context
+      setInterval(() => { this.checkForUpdates() }, checkInterval)
     } catch (_) { /** */ }
-
-    this.emitter = new EventEmitter();
-
-    this.checkForUpdates()
-
-    // using arrow function to pass `this` context
-    setInterval(() => { this.checkForUpdates() }, checkInterval)
   }
 
   async checkForUpdates() {
