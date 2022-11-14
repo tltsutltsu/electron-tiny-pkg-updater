@@ -197,7 +197,9 @@ class TinyUpdater {
       url: this.apiEndpoint
     })
 
-    return await request.json()
+    const response = await request.json()
+
+    return response.application_data
   }
 
   _getSystemInstallerExtension() {
