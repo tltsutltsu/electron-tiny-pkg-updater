@@ -36,8 +36,7 @@ class TinyUpdater {
 
   async checkForUpdates() {
     this.config = await this._getConfig()
-
-    this.emitter.emit('error', 'config' + this.config)
+    console.log(this.config, this.config.version)
 
     if (semver.gt(this.config.version, this.currentVersion)) {
       this.emitter.emit('updater', 'updates-available')
@@ -193,12 +192,12 @@ class TinyUpdater {
   }
 
   async _getConfig() {
-    const config = await this._makeApiRequest({
+    const request = await this._makeApiRequest({
       method: "POST",
       url: this.apiEndpoint
     })
 
-    return await config.json()
+    return await request.json()
   }
 
   _getSystemInstallerExtension() {
