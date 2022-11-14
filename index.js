@@ -224,14 +224,12 @@ class TinyUpdater {
   }
 
   async _getConfig() {
-    try {
-      const config = await this._makeApiRequest({
-        method: "POST",
-        url: this.apiEndpoint
-      })
+    const config = await this._makeApiRequest({
+      method: "POST",
+      url: this.apiEndpoint
+    })
 
-      return JSON.parse(config)
-    } catch (_) { /** */ }
+    return JSON.parse(config)
   }
 
   _getSystemInstallerExtension() {
