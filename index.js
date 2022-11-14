@@ -196,9 +196,7 @@ class TinyUpdater {
       url: this.apiEndpoint
     })
 
-    console.log(config)
-
-    return JSON.parse(config)
+    return config.json()
   }
 
   _getSystemInstallerExtension() {
