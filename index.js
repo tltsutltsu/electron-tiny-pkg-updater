@@ -7,20 +7,23 @@ const semver = require("semver");
 const EventEmitter = require("events");
 const { spawn } = require("child_process");
 const exec = require("child_process").exec;
+const fetch = require("node-fetch")
 
 class TinyUpdater {
   constructor({
     currentVersion,
     configUrl,
     localFolder,
+    userAgent,
+    apiEndpoint,
     checkInterval = 1000 * 60 * 30,
-    translated = false
   }) {
     this.currentVersion = currentVersion
     this.configUrl = configUrl
     this.remoteUrl = path.dirname(configUrl)
     this.localFolder = localFolder
-    this.translated = translated
+    this.userAgent = userAgent
+    this.apiEndpoint = apiEndpoint
 
     try {
       fs.mkdirSync(localFolder)
@@ -53,8 +56,7 @@ class TinyUpdater {
   async download() {
     this.emitter.emit('updater', 'downloading-updates')
 
-    const downloadLink = this._detectProperDownloadLink()
-
+    const downloadLink = this.config.download_link
     const directoryToSave = path.dirname(this.getVersionInstallerPath(this.config.version))
 
     try {
@@ -86,12 +88,6 @@ class TinyUpdater {
     )
   }
 
-  getProcessArch() {
-    if (this.translated) return 'arm64'
-
-    return process.arch
-  }
-
   checkIfDownloaded(version) {
     const installerPath = this.getVersionInstallerPath(version)
     const exists = fs.existsSync(installerPath)
@@ -101,17 +97,14 @@ class TinyUpdater {
     const sizeInMb = fs.statSync(installerPath)
       .size / (1024 * 1024)
 
-    const configMd5 = this.getProcessArch() === 'arm64'
-      ? this.config['md5-arm64']
-      : this.config.md5
+    const configMd5 = this.config.application_hash
     const installerMd5 = require('md5-file').sync(installerPath)
     const md5IsCorrect = configMd5 === installerMd5
 
     this.emitter.emit('md5', {
       configMd5,
       'arch': this.getProcessArch(),
-      'this.config.md5': this.config.md5,
-      'this.config-md5-arm64': this.config['md5-arm64'],
+      'this.config.application_hash': this.config.application_hash,
       installerMd5,
       md5IsCorrect
     })
@@ -138,6 +131,25 @@ class TinyUpdater {
       this.emitter.emit('updater', 'error', 'unsupported-platform')
       return
     }
+  }
+
+  _makeApiRequest({ method = "GET", url, data }) {
+    let options = {
+      method,
+      headers: {
+        'User-Agent': this.userAgent,
+        'Content-Type': 'application/json'
+      }
+    };
+
+    if (!["GET", "HEAD"].includes(method) && data) {
+      options['body'] = JSON.stringify(data)
+    }
+
+    return fetch(
+      url,
+      options
+    )
   }
 
   _downloadFile({ url, filenameToSave, directoryToSave, withProgress = true }) {
@@ -212,21 +224,13 @@ class TinyUpdater {
   }
 
   async _getConfig() {
-    const urlOnDisk = path.join(this.localFolder, 'latest.yml')
-
-    await this._downloadFile({
-      url: this.configUrl,
-      filenameToSave: 'latest.yml',
-      directoryToSave: this.localFolder,
-      withProgress: false,
-    });
-
     try {
-      const config = yaml.safeLoad(
-        fs.readFileSync(urlOnDisk, "utf8")
-      );
+      const config = await this._makeApiRequest({
+        method: "POST",
+        url: this.apiEndpoint
+      })
 
-      return config
+      return JSON.parse(config)
     } catch (_) { /** */ }
   }
 

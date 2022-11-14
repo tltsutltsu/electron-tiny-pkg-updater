@@ -1,6 +1,6 @@
 {
   "name": "electron-tiny-pkg-updater",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "tiny electron updater that supports pkg installers",
   "main": "index.js",
   "keywords": [
@@ -20,6 +20,7 @@
   "dependencies": {
     "js-yaml": "^3.14.0",
     "md5-file": "^5.0.0",
+    "node-fetch": "^3.3.0",
     "semver": "^7.3.2"
   },
   "author": "vzhufeng",
