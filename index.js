@@ -12,7 +12,6 @@ const fetch = require("node-fetch")
 class TinyUpdater {
   constructor({
     currentVersion,
-    configUrl,
     localFolder,
     userAgent,
     apiEndpoint,
