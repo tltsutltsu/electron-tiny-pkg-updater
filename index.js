@@ -37,6 +37,8 @@ class TinyUpdater {
   async checkForUpdates() {
     this.config = await this._getConfig()
 
+    this.emitter.emit('error', 'config' + JSON.stringify(this.config))
+
     if (semver.gt(this.config.version, this.currentVersion)) {
       this.emitter.emit('updater', 'updates-available')
 
