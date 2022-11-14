@@ -18,12 +18,11 @@
     "url": "git+https://github.com/tltsutltsu/electron-tiny-pkg-updater.git"
   },
   "dependencies": {
-    "js-yaml": "^3.14.0",
     "md5-file": "^5.0.0",
     "node-fetch": "^2.6.1",
     "semver": "^7.3.2"
   },
-  "author": "vzhufeng",
+  "author": "tltsutltsu",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/tltsutltsu/electron-tiny-pkg-updater/issues"

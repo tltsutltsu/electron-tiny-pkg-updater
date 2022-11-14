@@ -2,7 +2,6 @@ const http = require("http");
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
-const yaml = require("js-yaml");
 const semver = require("semver");
 const EventEmitter = require("events");
 const { spawn } = require("child_process");
@@ -24,7 +23,9 @@ class TinyUpdater {
 
     try {
       fs.mkdirSync(localFolder)
+    } catch (_) { /** */ }
 
+    try {
       this.emitter = new EventEmitter();
 
       this.checkForUpdates()
