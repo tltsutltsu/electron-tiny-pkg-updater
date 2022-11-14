@@ -18,8 +18,6 @@ class TinyUpdater {
     checkInterval = 1000 * 60 * 30,
   }) {
     this.currentVersion = currentVersion
-    this.configUrl = configUrl
-    this.remoteUrl = path.dirname(configUrl)
     this.localFolder = localFolder
     this.userAgent = userAgent
     this.apiEndpoint = apiEndpoint
@@ -190,36 +188,6 @@ class TinyUpdater {
       });
       req.end();
     });
-  }
-
-  _detectProperDownloadLink() {
-    let neededFormat = this._getSystemInstallerExtension()
-
-    for (const file of this.config.files) {
-      if (neededFormat === 'pkg') {
-        neededFormat = 'dmg'
-      }
-
-      if (file.url.endsWith(neededFormat)) {
-        if (neededFormat === 'dmg') {
-          const properArch = this.getProcessArch() === 'arm64' ? 'arm64' : 'x64'
-
-          const link = path.join(
-            this.remoteUrl,
-            file.url
-              .replace('dmg', 'pkg')
-              .replace('x64', properArch)
-              .replace('arm64', properArch)
-          )
-
-          this.emitter.emit('download-link', link)
-
-          return link
-        }
-
-        return path.join(this.remoteUrl, file.url)
-      }
-    }
   }
 
   async _getConfig() {
