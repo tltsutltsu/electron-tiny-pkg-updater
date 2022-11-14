@@ -20,7 +20,7 @@
   "dependencies": {
     "js-yaml": "^3.14.0",
     "md5-file": "^5.0.0",
-    "node-fetch": "^3.3.0",
+    "node-fetch": "^2.6.1",
     "semver": "^7.3.2"
   },
   "author": "vzhufeng",
