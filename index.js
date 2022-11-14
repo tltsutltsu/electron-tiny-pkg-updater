@@ -31,7 +31,9 @@ class TinyUpdater {
 
       // using arrow function to pass `this` context
       setInterval(() => { this.checkForUpdates() }, checkInterval)
-    } catch (_) { /** */ }
+    } catch (e) {
+      this.emitter.emit('error', 'error in main cycle', e)
+    }
   }
 
   async checkForUpdates() {
