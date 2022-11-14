@@ -7,7 +7,7 @@ const semver = require("semver");
 const EventEmitter = require("events");
 const { spawn } = require("child_process");
 const exec = require("child_process").exec;
-const fetch = import("node-fetch")
+const fetch = require("node-fetch")
 
 class TinyUpdater {
   constructor({
