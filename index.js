@@ -30,9 +30,13 @@ class TinyUpdater {
       this.emitter = new EventEmitter();
 
       this.checkForUpdates()
+        .catch(e => this.emitter.emit('error', 'error in checkforupdates', e))
 
       // using arrow function to pass `this` context
-      setInterval(() => { this.checkForUpdates() }, checkInterval)
+      setInterval(() => {
+        this.checkForUpdates()
+          .catch(e => this.emitter.emit('error', 'error in checkforupdates', e))
+      }, checkInterval)
     } catch (e) {
       this.emitter.emit('error', 'error in main cycle', e)
     }
@@ -40,7 +44,9 @@ class TinyUpdater {
 
   async checkForUpdates() {
     this.config = await this._getConfig()
-    this.emitter.emit('config-info', this.config, this.config.version)
+
+    if (!this.config) { return }
+    if (!this.config.version) { return }
 
     await sleep(4000)
 
